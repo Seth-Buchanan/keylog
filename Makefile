@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-g3 -c -Wall 
 KEYLOG_TARGETS=main.o keylogger.o networking.o find_event_file.o
 SERVER_TARGETS=server.o networking.o
 

