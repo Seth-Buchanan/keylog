@@ -1,5 +1,6 @@
 #ifndef KEYLOGGER_H
 #define KEYLOGGER_H
+#include <stdbool.h>
 
 #define NUM_EVENTS 128
 
@@ -11,6 +12,6 @@
  * \param keyboard The file descriptor for the keyboard input file
  * \param writeout The file descriptor to write keystrokes out to
  */
-void keylogger(int keyboard, int writeout);
+void keylogger(int keyboard, int writeout, bool releasedKeys);
 
 #endif
