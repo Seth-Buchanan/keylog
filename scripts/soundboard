@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# # # # # # # # # # # # # # # # # # # # # # #
+# This script can be used to create a       #
+# soundboard with any linux computer        #
+# with or without a monitor or logging in.  #
+# # # # # # # # # # # # # # # # # # # # # # #
+
+set -e +o pipefail
+
+declare -A soundboard
+
+# Doesn't have to be a wav file depending on the audio player used
+soundboard=(
+    ["B"]="bonk.wav"
+    ["H"]="huh.wav"
+    ["P"]="punch.wav"
+    ["R"]="shaggy.wav"
+)
+
+
+sudo ./keylog | 
+    while IFS= read -r line
+    do
+	if [[ "${#soundboard[$line]}" -ne "0" ]] then
+	   mplayer ./sounds/${soundboard[$line]} &
+	   else
+	       mplayer ./sounds/bonk.wav &
+	fi
+    done
