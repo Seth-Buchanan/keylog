@@ -4,10 +4,18 @@
 # soundboard with any linux computer        #
 # with or without a monitor or logging in.  #
 # # # # # # # # # # # # # # # # # # # # # # #
-
 set -e +o pipefail
 
+exampleEventFile=(`ls /dev/input/event* | head -n 1`)
+if test ! -r "$exampleEventFile"; then
+    neededGroup=$(stat -c "%G" "$exampleEventFile")
+    echo "User \"$USER\" needs to be in group \"$neededGroup\""
+    echo "to read keypress files in /dev/input"
+    exit
+fi
+
 declare -A soundboard
+
 
 # Doesn't have to be a wav file depending on the audio player used
 soundboard=(
@@ -17,8 +25,7 @@ soundboard=(
     ["R"]="shaggy.wav"
 )
 
-
-sudo ./keylog | 
+./keylog | 
     while IFS= read -r line
     do
 	if [[ "${#soundboard[$line]}" -ne "0" ]] then
