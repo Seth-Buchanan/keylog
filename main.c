@@ -10,7 +10,6 @@
 #include "networking.h"
 #include "find_event_file.h"
 
-
 #define PORT "3491"
 
 void print_usage_and_quit(char *application_name);
@@ -19,11 +18,12 @@ void print_help_and_quit(char *application_name);
 int main(int argc, char *argv[]){
   int writeout, option, keyboard, option_index = 0;
   bool network, file, releasedKeys;
-  char *option_input;
+  char *option_input = NULL;
   char *port_num = PORT;
     
-  option = 0;
+  option = writeout = 0;
   releasedKeys = network = file = false;
+  
     
   static struct option long_options[] = {
     {"silent",   no_argument,       0,  's'},
@@ -39,8 +39,12 @@ int main(int argc, char *argv[]){
     {
       switch(option){
       case 's':
-	freopen("/dev/null", "w", stdout);
-	freopen("/dev/null", "w", stderr);
+	if (freopen("/dev/null", "w", stdout) == NULL)
+	  perror("Failed to redirect stdout to /dev/null");
+	
+	if (freopen("/dev/null", "w", stderr) == NULL)
+	  perror("Failed to redirect stderr to /dev/null");
+	
 	break;
       case 'n':
 	network = true;
@@ -126,4 +130,3 @@ void print_usage_and_quit(char *application_name){
   printf("Try: '%s --help' for more information.\n", application_name);
   exit(1);
 }
- 

